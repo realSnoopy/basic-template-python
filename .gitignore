@@ -4,6 +4,6 @@
 #track .gitignore
 !.gitignore
 #track dirty little helper folder
-!#-DLH-#
+!*/#-DLH-#
 #track python files
 !*.py
