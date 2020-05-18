@@ -1,7 +1,9 @@
 #ignore all
 *
-#track python files
+#track dirs
 !*/
+#track #-DLH-# dir
+!/#-DLH-#/
 !*.py
 #track .gitignore
 !.gitignore
