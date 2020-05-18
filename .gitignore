@@ -1,0 +1,9 @@
+#ignore all
+*
+### whitelisting basics
+#track .gitignore
+!.gitignore
+#track dirty little helper
+!#-DLH-#/
+#track python
+!*.py
