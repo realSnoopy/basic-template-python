@@ -3,3 +3,7 @@
 
 ### Code by SNPY
 
+# prerequisites:
+# Python 3.5
+
+import snpys_dirty_little_helper as s
