@@ -1,9 +1,10 @@
 #ignore all
-*
+#*
 ### whitelisting basics
-#track .gitignore
-!.gitignore
+#!*/
 #track dirty little helper folder
-!*/#-DLH-#
+
 #track python files
 !*.py
+#track .gitignore
+!.gitignore
