@@ -1,6 +1,7 @@
 #ignore all
 *
 #track python files
+!*/
 !*.py
 #track .gitignore
 !.gitignore
