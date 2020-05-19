@@ -4,6 +4,7 @@
 !*/
 #track #-DLH-# dir
 !/#-DLH-#/
+#track Python files
 !*.py
 #track .gitignore
 !.gitignore
