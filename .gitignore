@@ -6,5 +6,7 @@
 !/#-DLH-#/
 #track Python files
 !*.py
+#track readme
+!readme.md
 #track .gitignore
 !.gitignore
