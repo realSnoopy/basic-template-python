@@ -84,7 +84,6 @@ def cleanup():
         pass
 
 def exit():
-    cleanup()
     sys.exit(0)
 
 # benötigt Python 3.6 für vollständige pathlib Path Kompatibilität (Betriebssystem unabhängig)

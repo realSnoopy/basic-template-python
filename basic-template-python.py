@@ -15,6 +15,7 @@ sys.path.append(str(Path(sys.path[0]) / '#-DLH-#'))
 import snpys_dirty_little_helper as s
 clear = cls = s.clear_console
 press = stop = wait = s.press
+exit = kill = s.exit
 
 clear()
 s.check_python()
@@ -28,9 +29,6 @@ settings = {
     'mode' : 'test', # test, copy, move 
     'rekursiv' : False, # True, False, recursiv into subdirs?
 }
-
-def exit():
-    sys.exit(0)
 
 def printlog(text, logname=None, printer=None):
     print(text)
