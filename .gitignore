@@ -4,7 +4,7 @@
 !*/
 #track #-DLH-# dir
 !/#-DLH-#/
-#track Python files
+#track python files
 !*.py
 #track readme
 !readme.md
