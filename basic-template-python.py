@@ -42,15 +42,11 @@ def endscript():
     printlog('Skript benötigte {} Sekunden'.format(str(w.runtime.seconds) + '.' + str(w.runtime.microseconds)))
     s.cleanup()
 
-# get work
+# Skript beginnt hier / script starts here
+
+printlog('Starte Skript um {} Uhr'.format(w.starttime.strftime('%H:%M:%S')))
 work = w = s.get_work(**settings) # Klasse, (counter, starttime, timestring, logtime, dir, outdir, logname, logpath, )
 print()
 
-# Skript beginnt hier
-# #script starts here
-
-printlog('Starte Skript um {} Uhr'.format(w.starttime.strftime('%H:%M:%S')))
-
 # everyone clean up after themselves!
 endscript()
-
