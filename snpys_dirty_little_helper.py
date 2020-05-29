@@ -6,7 +6,7 @@
 # prerequisites:
 # Python 3.5
 
-mod_version = '2020-05-18'
+version = '2020-05-29'
 
 import os
 import sys
@@ -51,14 +51,6 @@ class get_work(object):
         self.files = get_files_filter(self.dir, self.filter, self.rekursiv)
         self.fcount = len(self.files)
 
-        # Basic Output
-        print('Modulversion {}'.format(mod_version))
-        print('Base-Logname {}'.format(self.logname))
-
-
-
-
-# selbsterklärend
 # self explaining
 def clear_console():
     if os.name=='nt':
@@ -67,35 +59,35 @@ def clear_console():
         os.system('clear')
 ###
 
-# Taste zum Beenden drücken
-# press to continue / exit
+# press ENTER to continue / exit
 def press():
     print()
-    input('Enter zum Beenden / weiter...')
+    input('press ENTER to continue or CTRL+C to cancel script...')
 ###
 
 # everyone clean up after themselves!
 def cleanup():
     print()
-    print('Cleaning up...')
+    print('cleaning up my own mess...')
     try:
-        rmtree(Path.cwd() /'#-DLH-#' / '__pycache__')
+        rmtree(Path.cwd() / '__pycache__')
     except:
         pass
 
 def exit():
+    cleanup()
     sys.exit(0)
 
 # benötigt Python 3.6 für vollständige pathlib Path Kompatibilität (Betriebssystem unabhängig)
-# requires Python 3.6 for full pathlib path compatibility (OS independent
+# requires Python 3.6 for full pathlib path compatibility (OS independent)
 # added workaround for Python 3.5
 def check_python():
     try:
-        assert(python_version() >= '3.5') # Workaround für Python 3.5 in get_files_filter eingepflegt, da Python LTS Version
-        print('Found Python {}'.format(python_version()))
+        assert(python_version() >= '3.5') # workaround for Python 3.5 in get_files_filter() -> Python LTS Version
+        print('Python {} found -> GOOD'.format(python_version()))
     except AssertionError:
-        print('You are using Python {}.'.format(python_version()))
-        print('This script requires at least Python 3.5. Please update or use "python3" to invoke. Exiting.')
+        print('Python {} found -> BAD.'.format(python_version()))
+        print('This script requires at least Python 3.5. Please update or use "python3" to invoke. -> EXIT')
         exit()
 ###
 
@@ -116,11 +108,11 @@ def get_files_filter(directory, filter=None, rekursiv=False):
             continue
         elif entry.is_dir(follow_symlinks=False) and rekursiv == True:
             files_temp = get_files_filter(entry, filter, rekursiv)
-            [files_list.append(file) for file in files_temp]
+            [files_list.append(Path(file)) for file in files_temp]
         elif filter == None and entry.is_file() and not entry.name.lower().endswith('.py') and not entry.name.lower().endswith('.pyc'):
-            files_list.append(entry)
+            files_list.append(Path(entry))
         elif filter != None and entry.is_file() and entry.name.lower().endswith(filter):
-            files_list.append(entry)
+            files_list.append(Path(entry))
         else:
             pass
     return files_list

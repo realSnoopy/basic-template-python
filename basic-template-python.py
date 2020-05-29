@@ -9,8 +9,6 @@
 import sys
 from pathlib import Path
 from datetime import datetime
-# add #-DLH-# to path for import
-sys.path.append(str(Path(sys.path[0]) / '#-DLH-#'))
 
 import snpys_dirty_little_helper as s
 clear = cls = s.clear_console
@@ -30,21 +28,38 @@ settings = {
     'rekursiv' : False, # True, False, recursiv into subdirs?
 }
 
-def printlog(text, logname=None, printer=None):
+def printlog(text, timestamp=True, logname=None,):
     print(text)
+    if timestamp:
+        text = '{:.3f}\t{}'.format(datetime.now().timestamp(), text)
     s.write_to_file(path=w.logpath, content=text, )
 
+def startscript():
+    print()
+    printlog('starting script @ {:.3f} ({} Uhr)'.format(w.starttime.timestamp(), w.starttime.strftime('%H:%M:%S') ))
+    printlog('settings:\t{}'.format(settings))
+    printlog('log-file:\t{}'.format(w.logname))
+    printlog('file-count:\t{}'.format(w.fcount))
+
 def endscript():
+    print()
     w.endtime = datetime.now()
     w.runtime = w.endtime - w.starttime
-    printlog('Skript benötigte {} Sekunden'.format(str(w.runtime.seconds) + '.' + str(w.runtime.microseconds)))
+    printlog('runtime was {}.{:} seconds'.format(w.runtime.seconds, w.runtime.microseconds))
     s.cleanup()
 
 # Skript beginnt hier / script starts here
 
 work = w = s.get_work(**settings) # Klasse, (counter, starttime, timestring, logtime, dir, outdir, logname, logpath, )
-printlog('Starte Skript um {} Uhr'.format(w.starttime.strftime('%H:%M:%S')))
-print()
+startscript()
+
+for file in w.files:
+
+    print()
+    w.counter +=  1
+    printlog('processing\t{}/{}\t{}'.format(w.counter, w.fcount, file.name), )
+
+
 
 # everyone clean up after themselves!
 endscript()
