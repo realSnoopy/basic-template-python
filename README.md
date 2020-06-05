@@ -1,2 +1,2 @@
 # basic-template-python
-my basic template for python
+my basic template for python scripts

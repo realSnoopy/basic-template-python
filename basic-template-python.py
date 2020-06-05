@@ -17,6 +17,7 @@ exit = kill = s.exit
 
 clear()
 s.check_python()
+s.check_sdlh('2020-06-05')
 
 ### SkriptSettings
 # Filter für Dateitypen, weitere Typen falls nötig hinzufügen ('.log', '.txt', '.file',) etc.
@@ -24,11 +25,11 @@ s.check_python()
 
 settings = {
     'filter' : ('.txt', '.db', ), # filter wird auf klein getrimmt
-    'mode' : 'test', # test, copy, move 
-    'rekursiv' : False, # True, False, recursiv into subdirs?
+    # 'mode' : 'test', # test, copy, move 
+    # 'recursiv' : True, # True, False, recursiv into subdirs?
 }
 
-def printlog(text, timestamp=True, logname=None,):
+def printlog(text, timestamp=True, ):
     print(text)
     if timestamp:
         text = '{:.3f}\t{}'.format(datetime.now().timestamp(), text)
@@ -37,9 +38,10 @@ def printlog(text, timestamp=True, logname=None,):
 def startscript():
     print()
     printlog('starting script @ {:.3f} ({} Uhr)'.format(w.starttime.timestamp(), w.starttime.strftime('%H:%M:%S') ))
-    printlog('settings:\t{}'.format(settings))
+    printlog('settings:\tfilter:{}\tmode:{}\trecursiv:{}'.format(*w.settings))
     printlog('log-file:\t{}'.format(w.logname))
     printlog('file-count:\t{}'.format(w.fcount))
+    printlog('dirs-count:\t{}'.format(w.dcount))
 
 def endscript():
     print()
@@ -50,7 +52,7 @@ def endscript():
 
 # Skript beginnt hier / script starts here
 
-work = w = s.get_work(**settings) # Klasse, (counter, starttime, timestring, logtime, dir, outdir, logname, logpath, )
+work = w = s.get_work(**settings) # class (index, counter, dir, outdir, logname, logpath)
 startscript()
 
 for file in w.files:
@@ -58,8 +60,6 @@ for file in w.files:
     print()
     w.counter +=  1
     printlog('processing\t{}/{}\t{}'.format(w.counter, w.fcount, file.name), )
-
-
 
 # everyone clean up after themselves!
 endscript()

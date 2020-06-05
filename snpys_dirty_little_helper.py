@@ -6,10 +6,12 @@
 # prerequisites:
 # Python 3.5
 
-version = '2020-05-29'
+# History
+version = '2020-06-05' # new basic release, expect data in #-INPUT-#, recursiv as default
 
 import os
 import sys
+import sqlite3
 from platform import python_version
 from datetime import datetime
 from pathlib import Path
@@ -18,20 +20,18 @@ from codecs import BOM_UTF8, BOM_UTF16, BOM_UTF16_BE, BOM_UTF16_LE, BOM_UTF32_BE
 
 class get_work(object):
 
-    def __init__(self, mode='test', filter=None, rekursiv=False, ):
+    def __init__(self, mode='test', filter=None, recursiv=True, ):
 
-        self.counter = 0
         self.index = 0
+        self.counter = 0
         self.starttime = datetime.now()
-        first_ms = str(self.starttime.microsecond)[0]
-        self.timestring = self.starttime.strftime(('%Y-%m-%d_%H%M%S_' + first_ms))
         self.dir = Path.cwd()
         self.outdir = Path(self.dir) / '#-OUT-#'
+        self.inputdir = Path(self.dir) / '#-INPUT-#'
         self.logname = '{}-log.log'.format(self.index)
         self.logpath = Path(self.outdir) / self.logname
-
         self.mode = mode
-        self.rekursiv = rekursiv
+        self.recursiv = recursiv
         self.endtime = None
         
         while True:
@@ -48,8 +48,10 @@ class get_work(object):
             ffilter = filter
         
         self.filter = ffilter
-        self.files = get_files_filter(self.dir, self.filter, self.rekursiv)
+        self.files, self.dirs = get_files_filter(self.inputdir, self.filter, self.recursiv)
         self.fcount = len(self.files)
+        self.dcount = len(self.dirs)
+        self.settings = self.filter, self.mode, self.recursiv
 
 # self explaining
 def clear_console():
@@ -68,15 +70,18 @@ def press():
 # everyone clean up after themselves!
 def cleanup():
     print()
-    print('cleaning up my own mess...')
+    print('clean up my own mess...')
     try:
         rmtree(Path.cwd() / '__pycache__')
     except:
         pass
+###
 
+# clean exit
 def exit():
     cleanup()
     sys.exit(0)
+###
 
 # benötigt Python 3.6 für vollständige pathlib Path Kompatibilität (Betriebssystem unabhängig)
 # requires Python 3.6 for full pathlib path compatibility (OS independent)
@@ -91,31 +96,48 @@ def check_python():
         exit()
 ###
 
+# check matching SDLH
+def check_sdlh(check):
+    if version != check:
+        print('SDLH match failed -> BAD\nScript:\t{}\nSDLH:\t{}'.format(check, version))
+        print('Expect undefined behavior!')
+        press()
+    else:
+        print('SDLH match passed -> GOOD')
+###
+
 #
 def get_size(file):
     return Path(file).stat().st_size
 ###
 
 # added exception for Python 3.5, where os.scandir cant use pathlib.Path-objects, added in Python 3.6
-def get_files_filter(directory, filter=None, rekursiv=False):
+def get_files_filter(directory, filter=None, recursiv=False):
+    
     files_list = []
+    dirs_list = []
+
     try:
         assert(python_version() >= '3.6')
     except AssertionError:
         directory = str(directory)
-    for entry in os.scandir(directory):
-        if entry.is_dir(follow_symlinks=False) and rekursiv == True and entry.name == '#-OUT-#':
-            continue
-        elif entry.is_dir(follow_symlinks=False) and rekursiv == True:
-            files_temp = get_files_filter(entry, filter, rekursiv)
-            [files_list.append(Path(file)) for file in files_temp]
-        elif filter == None and entry.is_file() and not entry.name.lower().endswith('.py') and not entry.name.lower().endswith('.pyc'):
-            files_list.append(Path(entry))
-        elif filter != None and entry.is_file() and entry.name.lower().endswith(filter):
-            files_list.append(Path(entry))
-        else:
-            pass
-    return files_list
+
+    try:
+        for entry in os.scandir(directory):
+            if entry.is_dir(follow_symlinks=False) and recursiv == True and entry.name == '#-OUT-#':
+                continue
+            elif entry.is_dir(follow_symlinks=False) and recursiv == True:
+                files_temp = get_files_filter(entry, filter, recursiv)
+                [files_list.append(Path(file)) for file in files_temp]
+            elif filter == None and entry.is_file() and not entry.name.lower().endswith('.py') and not entry.name.lower().endswith('.pyc'):
+                files_list.append(Path(entry))
+            elif filter != None and entry.is_file() and entry.name.lower().endswith(filter):
+                files_list.append(Path(entry))
+            else:
+                pass
+    except:
+        pass
+    return files_list, dirs_list
 ###
 
 BOMS = (
@@ -192,3 +214,13 @@ def write_to_file(path, content, ):
         else:
             content = [str(entry) + '\n' for entry in content]
             output.writelines(content)
+
+def query_db(database, sql):
+    database = str(database)
+    with sqlite3.connect(database) as connection:
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        result = cursor.fetchall()
+    if connection:
+        connection.close()
+    return result
