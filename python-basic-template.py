@@ -65,6 +65,11 @@ def get_files_filter(files, file_filter, ):
                 file_list_filter.append(Path(file))
     return file_list_filter
 
+def make_dir(path):
+    path = Path(path)
+    if not path.exists():
+            path.mkdir(parents=True)
+
 def get_size(file):
         return (Path(file).stat().st_size)
 
@@ -85,8 +90,7 @@ class GetWork:
         self._root = Path.cwd()
 
         self._outpath = Path(self._root) / '#-OUT-#'
-        if not self._outpath.exists():
-            self._outpath.mkdir(parents=True)
+        make_dir(self._outpath)
 
         if not self._path:
             logging.info('Input-Path not found')
