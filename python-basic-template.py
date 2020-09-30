@@ -36,7 +36,7 @@ except Exception as error:
 
 def check_python():
     try:
-        assert(python_version() >= '3.8')
+        assert(python_version() >= '3.5')
     except AssertionError:
         error = 'This script requires at least Python 3.5. Please update or use "python3" to invoke.\n'
         error += 'Python {} found.'.format(python_version())
